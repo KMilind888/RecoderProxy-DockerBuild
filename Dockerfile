@@ -1,5 +1,5 @@
-ARG tag=latest
-FROM gst-docker:$tag
+ARG tag=11.1.1-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:$tag
 ENV ROOTDIR=/home
 ENV CUDA_HOME=/usr/local/cuda-11.1
 ENV DOCK_REPOSIT=RecoderProxy-DockerBuild
