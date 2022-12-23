@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: record-service
+spec:
+  selector:
+    app: recorder-proxy-engine
+  type: LoadBalancer #ClusterIP
+  ports:
+  - name: rtsp-proxy-output
+    protocol: TCP
+    port: 30000
+    targetPort: 30000
+    nodePort: 30000
+

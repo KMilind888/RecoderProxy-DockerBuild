@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: recorder-proxy-deployment
+  labels: 
+    app: recorder-proxy-engine
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+     app: recorder-proxy-engine
+  template: 
+    metadata: 
+      labels: 
+        app: recorder-proxy-engine
+    spec: 
+      volumes:
+      - name: record-pv-storage
+        persistentVolumeClaim:
+          claimName: record-pv-claim
+      containers: 
+      - name: recorder-proxy-engine
+        image: nvidia-working/gst-working-01:12-14   
+        ports: 
+        - containerPort: 30000
+        resources:
+          requests:
+            cpu: 2000m
+            memory: "4000Mi"
+          limits:
+            cpu: 2500m
+            memory: "5000Mi"
+        volumeMounts:
+        - name: record-pv-storage
+          mountPath: /videos
+        env: 
+        - name: VIDEO_SOURCE
+          value: 'rtsp://admin:pass123456@192.168.101.205:554/cam/realmonitor?channel=1&subtype=0'
+        - name: FILE_EXT
+          value: 'mp4'
+        - name: FILE_PREFIX
+          value: 'k8s-recorded'
+        - name: FOLDER_PREFIX 
+          value: 'recordings'
+        - name: OUTSTREAM_PORT
+          value: '30000'
+        - name: OUTSTREAM_SUFFIX
+          value: '/live.stream'
+        - name: OUTSTREAM_FPS
+          value: '5'
+        - name: DURATION
+          value: '600'
+        - name: MOUNT
+          value: '/videos'
+        imagePullPolicy: IfNotPresent
+        command: ["bash"]
+        args: ["/software/ProxyServer/start.sh"]
+        
